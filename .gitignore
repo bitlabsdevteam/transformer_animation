@@ -1,6 +1,28 @@
+# OS / editor
 .DS_Store
+.idea/
+.vscode/
+
+# Python
 .venv/
 __pycache__/
-*.pyc
-.env
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Node
 node_modules/
+
+# Env / secrets
+.env
+.env.*
+
+# Tool caches
+.impeccable/
+graphify-out/
+
+# Logs
+*.log
