@@ -1,0 +1,17 @@
+[project]
+name = "transformer-explainer-3d"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.151.0",
+    "numpy>=2.5.2",
+    "pytest>=9.1.1",
+    "safetensors>=0.8.0",
+    "torch>=2.14.1",
+    "transformers>=5.20.2",
+    "uvicorn>=0.54.0",
+]
+
+[[tool.uv.index]]
+url = "https://download.pytorch.org/whl/cpu"

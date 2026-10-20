@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Transformer Explainer 3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;700&display=swap" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Transformer Explainer <span>3D</span></div>
+    <form id="run-form" class="prompt">
+      <select id="examples" aria-label="Examples">
+        <option value="">Examples</option>
+        <option>Data visualization empowers users to</option>
+        <option>Artificial intelligence is transforming the</option>
+        <option>The capital of France is</option>
+        <option>Once upon a time, there was a</option>
+        <option>The quick brown fox jumps over the lazy</option>
+      </select>
+      <input id="text" type="text" autocomplete="off" spellcheck="false"
+             value="Data visualization empowers users to" aria-label="Input text" />
+      <button id="run" type="submit" class="primary">Run</button>
+    </form>
+    <div class="sampling">
+      <label>Temperature <output id="temp-out">0.8</output>
+        <input id="temp" type="range" min="0.1" max="2" step="0.1" value="0.8" />
+      </label>
+      <div class="sampling-mode">
+        <label><input type="radio" name="samp" value="top-k" checked /> Top-k</label>
+        <label><input type="radio" name="samp" value="top-p" /> Top-p</label>
+        <output id="samp-out">k=5</output>
+        <input id="samp-val" type="range" min="1" max="20" step="1" value="5" aria-label="Sampling value" />
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <canvas id="scene"></canvas>
+
+    <nav id="timeline" class="panel timeline" aria-label="Layers"></nav>
+
+    <aside id="inspector" class="panel inspector">
+      <div class="empty">
+        <h2>How to use</h2>
+        <p>Type any text and press <b>Run</b>. GPT-2 (small) runs a forward pass, then a backward pass of the
+          next-token loss. Every intermediate tensor is drawn as a 3D bar field. Rows are tokens, columns are
+          dimension bins, and bar height and colour show the value.</p>
+        <p><b>▶ Forward</b> animates data flowing embedding → 12 blocks → logits.
+          <b>◀ Backward</b> animates the gradient ∂L/∂x flowing back from the loss.</p>
+        <p>Click any bar to see the exact calculation with real numbers. The panel also re-derives the
+          gradient by hand and checks it against PyTorch autograd.</p>
+      </div>
+    </aside>
+
+    <section id="predictions" class="panel predictions" hidden>
+      <h3>Next token <small>click one to set the backward-pass target</small></h3>
+      <ol id="pred-list"></ol>
+      <div id="trunc-note" class="loss-line" hidden></div>
+      <div class="loss-line">Loss L = −log p(<b id="target-tok"></b>) = <b id="loss"></b></div>
+      <button id="append" type="button">Append sampled token ↵</button>
+    </section>
+
+    <div id="tooltip" class="tooltip" hidden></div>
+    <div id="status" class="status" hidden></div>
+
+    <footer class="controls panel">
+      <div class="seg" role="group" aria-label="Show">
+        <button id="mode-val" class="on" type="button">Activations</button>
+        <button id="mode-grad" type="button">Gradients</button>
+      </div>
+      <button id="play-fwd" type="button" class="primary" disabled>▶ Forward</button>
+      <button id="play-bwd" type="button" class="danger" disabled>◀ Backward</button>
+      <button id="pause" type="button" disabled>❚❚</button>
+      <button id="prev" type="button" disabled aria-label="Previous stage">‹</button>
+      <button id="next" type="button" disabled aria-label="Next stage">›</button>
+      <label class="speed">Speed <input id="speed" type="range" min="0.25" max="4" step="0.25" value="1" /></label>
+      <button id="overview" type="button">Overview</button>
+      <div id="stage-label" class="stage-label"></div>
+    </footer>
+  </main>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
